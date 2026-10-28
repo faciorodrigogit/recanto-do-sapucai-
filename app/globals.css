@@ -1,0 +1,284 @@
+@import 'tailwindcss';
+
+/* ───────── Design tokens (idênticos ao index.html original) ───────── */
+@theme {
+  --color-creme: #f0eadc;
+  --color-creme-2: #eeebdc;
+  --color-palha: #bab476;
+  --color-caqui-claro: #c9bd7c;
+  --color-hero-sub: #d8d0a6;
+  --color-caqui: #c3b47b;
+  --color-caqui-card: #c1b374;
+  --color-oliva-escuro: #6b5a24;
+  --color-marrom-oliva: #6d5a2f;
+  --color-marrom-split: #705e36;
+  --color-linha-clara: #86733f;
+  --color-linha-escura: #5a4a24;
+  --color-floresta: #3e3418;
+  --color-floresta-2: #2a2410;
+  --color-logo: #42340f;
+  --color-texto: #2b2616;
+  --color-texto-2: #5c5340;
+  --color-titulo-claro: #4a3d17;
+  --color-titulo-split: #eee6cc;
+  --color-historia: #3a3012;
+  --color-texto-creme: #e8dfc2;
+  --color-texto-creme-2: #a79f80;
+  --color-placeholder: #8a8169;
+
+  --font-display: 'Poiret One', 'Federo', 'Josefin Sans', sans-serif;
+  --font-texto: 'Jost', 'Montserrat', system-ui, sans-serif;
+
+  --ease-editorial: cubic-bezier(0.22, 0.61, 0.36, 1);
+
+  --shadow-card: 0 10px 30px rgba(42, 36, 16, 0.12);
+  --shadow-header: 0 2px 14px rgba(42, 36, 16, 0.08);
+  --shadow-historia: 0 18px 40px rgba(30, 24, 8, 0.25);
+  --shadow-reserva: 0 20px 50px rgba(10, 10, 5, 0.35);
+  --shadow-dropdown: 0 18px 40px rgba(20, 18, 8, 0.25);
+
+  --breakpoint-tablet: 720px;
+  --breakpoint-nav: 900px;
+  --breakpoint-wide: 1100px;
+}
+
+:root {
+  --overlay: rgba(20, 22, 14, 0.55);
+  --pattern: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='64' viewBox='0 0 256 64' fill='none' stroke-width='1.5'%3E%3Crect width='256' height='64' fill='%236D5A2F'/%3E%3Cg stroke='%2386733F'%3E%3Ccircle cx='32' cy='32' r='22'/%3E%3Ccircle cx='32' cy='32' r='15'/%3E%3Ccircle cx='32' cy='32' r='8'/%3E%3Ccircle cx='32' cy='32' r='2'/%3E%3Cpath d='M160 10 L182 32 L160 54 L138 32 Z'/%3E%3Cpath d='M160 19 L173 32 L160 45 L147 32 Z'/%3E%3Cpath d='M160 27 L165 32 L160 37 L155 32 Z'/%3E%3C/g%3E%3Cg stroke='%235A4A24'%3E%3Crect x='75' y='11' width='42' height='42'/%3E%3Cpath d='M75 11 L117 53 M117 11 L75 53'/%3E%3Crect x='203' y='11' width='42' height='42'/%3E%3Crect x='211' y='19' width='26' height='26'/%3E%3Crect x='219' y='27' width='10' height='10'/%3E%3Cpath d='M0 0.75 H256 M0 63.25 H256'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    font-family: var(--font-texto);
+    color: var(--color-texto);
+    background: var(--color-creme-2);
+    line-height: 1.6;
+    font-size: 16px;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+}
+
+@layer components {
+  .container-site {
+    max-width: 1160px;
+    margin: 0 auto;
+    padding: 0 40px;
+  }
+  @media (max-width: 720px) {
+    .container-site {
+      padding: 0 16px;
+    }
+  }
+
+  .display {
+    font-family: var(--font-display);
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    line-height: 1.15;
+  }
+  .section-title {
+    font-size: clamp(28px, 3.4vw, 38px);
+    color: var(--color-titulo-claro);
+    margin-bottom: 48px;
+  }
+
+  .icon {
+    width: 20px;
+    height: 20px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    flex: none;
+  }
+
+  /* Foto com fallback em tons da floresta */
+  .photo {
+    position: relative;
+    overflow: hidden;
+    background:
+      radial-gradient(ellipse at 30% 20%, rgba(186, 180, 118, 0.18), transparent 55%),
+      linear-gradient(160deg, #4a4023 0%, #2c2a17 55%, #1d1f12 100%);
+  }
+  .photo img {
+    object-fit: cover;
+    transition: transform 0.3s var(--ease-editorial);
+  }
+
+  /* Botões */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border: 0;
+    border-radius: 999px;
+    cursor: pointer;
+    font-family: var(--font-texto);
+    font-size: 11.5px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    line-height: 1;
+    padding: 12px 30px;
+    transition:
+      transform 0.25s var(--ease-editorial),
+      background-color 0.25s var(--ease-editorial),
+      filter 0.25s var(--ease-editorial);
+  }
+  .btn:hover {
+    transform: translateY(-1px);
+    filter: brightness(0.93);
+  }
+  .btn:focus-visible {
+    outline: 2px solid var(--color-caqui);
+    outline-offset: 3px;
+  }
+  .btn-caqui {
+    background: var(--color-caqui);
+    color: var(--color-texto);
+  }
+  .btn-oliva {
+    background: var(--color-oliva-escuro);
+    color: var(--color-creme);
+  }
+  .btn-creme {
+    background: var(--color-creme);
+    color: var(--color-texto);
+  }
+
+  /* Escurecimento + vinheta do hero */
+  .hero-overlay::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background:
+      radial-gradient(ellipse at center, transparent 35%, rgba(12, 13, 8, 0.55) 100%),
+      var(--overlay);
+  }
+
+  /* Faixa de padrão geométrico */
+  .pattern-band {
+    height: 64px;
+    width: 100%;
+    background:
+      var(--pattern) repeat-x left center / 256px 64px,
+      var(--color-marrom-oliva);
+  }
+  @media (max-width: 720px) {
+    .pattern-band {
+      height: 52px;
+      background-size: 208px 52px;
+    }
+  }
+  .pattern-fill {
+    background:
+      var(--pattern) repeat 0 0 / 256px 64px,
+      var(--color-marrom-oliva);
+  }
+
+  /* Fade-in ao rolar */
+  .reveal {
+    opacity: 0;
+    transform: translateY(16px);
+    transition:
+      opacity 0.7s var(--ease-editorial),
+      transform 0.7s var(--ease-editorial);
+  }
+  .reveal.is-visible {
+    opacity: 1;
+    transform: none;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .reveal {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+  }
+
+  /* Link do menu: sublinhado que cresce do centro */
+  .nav-link {
+    position: relative;
+    padding: 4px 0;
+    white-space: nowrap;
+  }
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    right: 50%;
+    bottom: 0;
+    height: 1px;
+    background: var(--color-oliva-escuro);
+    transition:
+      left 0.25s var(--ease-editorial),
+      right 0.25s var(--ease-editorial);
+  }
+  .nav-link:hover::after,
+  .nav-link.active::after {
+    left: 0;
+    right: 0;
+  }
+
+  /* Campos do formulário de reserva */
+  .field {
+    position: relative;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background-color 0.2s var(--ease-editorial);
+    min-width: 0;
+  }
+  .field + .field::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 22%;
+    bottom: 22%;
+    width: 1px;
+    background: rgba(66, 52, 15, 0.18);
+  }
+  .field:hover {
+    background: rgba(195, 180, 123, 0.22);
+  }
+  .field:focus-visible {
+    outline: 2px solid var(--color-caqui);
+    outline-offset: 3px;
+  }
+  @media (max-width: 900px) {
+    .field {
+      border-radius: 12px;
+      padding: 14px 16px;
+    }
+    .field + .field::before {
+      left: 16px;
+      right: 16px;
+      top: 0;
+      bottom: auto;
+      width: auto;
+      height: 1px;
+    }
+  }
+}

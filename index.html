@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BOAM — Cabanas na floresta</title>
+<meta name="description" content="BOAM: tiny houses de madeira no meio da mata. Seu lugar para desacelerar.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poiret+One&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --creme:#F0EADC; --creme-2:#EEEBDC;
+  --palha:#BAB476; --caqui-claro:#C9BD7C; --hero-sub:#D8D0A6;
+  --caqui:#C3B47B; --caqui-card:#C1B374;
+  --oliva-escuro:#6B5A24; --oliva-escuro-h:#5C4D1E;
+  --marrom-oliva:#6D5A2F; --marrom-split:#705E36;
+  --linha-clara:#86733F; --linha-escura:#5A4A24;
+  --floresta:#3E3418; --floresta-2:#2A2410;
+  --logo:#42340F; --texto:#2B2616; --texto-2:#5C5340;
+  --titulo-claro:#4A3D17; --historia:#3A3012;
+  --texto-creme:#E8DFC2; --texto-creme-2:#A79F80;
+  --overlay:rgba(20,22,14,.5);
+  --f-display:"Poiret One","Federo","Josefin Sans",sans-serif;
+  --f-texto:"Jost","Montserrat",system-ui,sans-serif;
+  --ease:cubic-bezier(.22,.61,.36,1);
+  --container:1160px;
+  --pattern:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='64' viewBox='0 0 256 64' fill='none' stroke-width='1.5'%3E%3Crect width='256' height='64' fill='%236D5A2F'/%3E%3Cg stroke='%2386733F'%3E%3Ccircle cx='32' cy='32' r='22'/%3E%3Ccircle cx='32' cy='32' r='15'/%3E%3Ccircle cx='32' cy='32' r='8'/%3E%3Ccircle cx='32' cy='32' r='2'/%3E%3Cpath d='M160 10 L182 32 L160 54 L138 32 Z'/%3E%3Cpath d='M160 19 L173 32 L160 45 L147 32 Z'/%3E%3Cpath d='M160 27 L165 32 L160 37 L155 32 Z'/%3E%3C/g%3E%3Cg stroke='%235A4A24'%3E%3Crect x='75' y='11' width='42' height='42'/%3E%3Cpath d='M75 11 L117 53 M117 11 L75 53'/%3E%3Crect x='203' y='11' width='42' height='42'/%3E%3Crect x='211' y='19' width='26' height='26'/%3E%3Crect x='219' y='27' width='10' height='10'/%3E%3Cpath d='M0 0.75 H256 M0 63.25 H256'/%3E%3C/g%3E%3C/svg%3E");
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{font-family:var(--f-texto);color:var(--texto);background:var(--creme-2);line-height:1.6;font-size:16px;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+button,input,select{font:inherit;color:inherit}
+.container{max-width:var(--container);margin:0 auto;padding:0 40px}
+.display{font-family:var(--f-display);font-weight:400;text-transform:uppercase;letter-spacing:.12em;line-height:1.15}
+.icon{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;flex:none}
+
+/* foto com fallback em tons da floresta caso a imagem não carregue */
+.photo{position:relative;overflow:hidden;background:
+  radial-gradient(ellipse at 30% 20%,rgba(186,180,118,.18),transparent 55%),
+  linear-gradient(160deg,#4a4023 0%,#2c2a17 55%,#1d1f12 100%)}
+.photo img{width:100%;height:100%;object-fit:cover;transition:transform .3s var(--ease)}
+
+/* Botões */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:999px;cursor:pointer;
+  font-family:var(--f-texto);font-size:11.5px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;line-height:1;
+  padding:12px 30px;transition:transform .25s var(--ease),background-color .25s var(--ease),filter .25s var(--ease)}
+.btn:hover{transform:translateY(-1px);filter:brightness(.93)}
+.btn:focus-visible,.nav a:focus-visible,.field:focus-visible{outline:2px solid var(--caqui);outline-offset:3px}
+.btn--caqui{background:var(--caqui);color:var(--texto)}
+.btn--oliva{background:var(--oliva-escuro);color:var(--creme)}
+.btn--creme{background:var(--creme);color:var(--texto)}
+
+/* Faixa de padrão */
+.pattern-band{height:64px;width:100%;background:var(--pattern) repeat-x left center / 256px 64px,var(--marrom-oliva)}
+
+/* Fade-in */
+.reveal{opacity:0;transform:translateY(16px);transition:opacity .7s var(--ease),transform .7s var(--ease)}
+.reveal.is-visible{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}html{scroll-behavior:auto}}
+
+/* ───────── 1. HEADER ───────── */
+.header{position:sticky;top:0;z-index:50;background:var(--creme);border-bottom:1px solid rgba(66,52,15,.12);transition:box-shadow .3s var(--ease)}
+.header.scrolled{box-shadow:0 2px 14px rgba(42,36,16,.08)}
+.header__inner{height:80px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;max-width:1240px;margin:0 auto;padding:0 40px}
+.nav{display:flex;gap:48px;font-size:14.5px;font-weight:500;color:var(--texto)}
+.nav--left{justify-content:flex-end;padding-right:56px}
+.nav--right{justify-content:flex-start;padding-left:56px}
+.nav a{position:relative;padding:4px 0;white-space:nowrap}
+.nav a::after{content:"";position:absolute;left:50%;right:50%;bottom:0;height:1px;background:var(--oliva-escuro);transition:left .25s var(--ease),right .25s var(--ease)}
+.nav a:hover::after,.nav a.active::after{left:0;right:0}
+.logo{display:block;width:44px;height:44px;color:var(--logo)}
+.logo svg{width:100%;height:100%}
+.menu-toggle{display:none;background:none;border:0;cursor:pointer;color:var(--texto);padding:8px;justify-self:end}
+.menu-toggle .icon{width:26px;height:26px}
+.mobile-menu{position:fixed;inset:0;background:var(--creme);z-index:60;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;
+  opacity:0;visibility:hidden;transition:opacity .3s var(--ease),visibility .3s}
+.mobile-menu.open{opacity:1;visibility:visible}
+.mobile-menu a{font-family:var(--f-display);font-size:26px;letter-spacing:.12em;text-transform:uppercase;color:var(--titulo-claro)}
+.mobile-menu .logo{width:56px;height:56px;margin-bottom:12px}
+.mobile-menu__close{position:absolute;top:24px;right:20px;background:none;border:0;cursor:pointer;color:var(--texto);padding:8px}
+.mobile-menu__close .icon{width:28px;height:28px}
+
+/* ───────── 2. HERO ───────── */
+.hero{position:relative;height:88vh;min-height:600px;max-height:820px;display:grid;place-items:center;text-align:center;overflow:hidden;color:var(--palha)}
+.hero__bg{position:absolute;inset:0}
+.hero__bg img{transform:scale(1.03)}
+.hero::before{content:"";position:absolute;inset:0;z-index:1;background:
+  radial-gradient(ellipse at center,transparent 35%,rgba(12,13,8,.55) 100%),var(--overlay)}
+.hero__content{position:relative;z-index:2;padding:0 24px}
+.hero__kicker{font-family:var(--f-display);font-size:16px;letter-spacing:.35em;text-transform:uppercase;color:var(--caqui-claro);margin-bottom:6px}
+.hero__title{font-family:var(--f-display);font-weight:400;font-size:clamp(76px,13vw,172px);letter-spacing:.15em;line-height:1;color:var(--palha);margin-right:-.15em;
+  text-shadow:0 2px 30px rgba(0,0,0,.25)}
+.hero__sub{font-size:12.5px;letter-spacing:.3em;text-transform:uppercase;color:var(--hero-sub);margin:14px 0 30px;font-weight:400}
+.hero__content .btn{padding:11px 26px;font-size:11px}
+
+/* ───────── 4. CABANAS ───────── */
+.cabins{background:var(--creme-2);padding:100px 0 104px;text-align:center}
+.section-title{font-size:clamp(28px,3.4vw,38px);color:var(--titulo-claro);margin-bottom:48px}
+.cabins__grid{display:grid;grid-template-columns:repeat(3,1fr);gap:48px;max-width:940px;margin:0 auto 56px}
+.cabin__name{font-size:14px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--texto);margin-bottom:14px}
+.cabin__media{aspect-ratio:5/4.6;border-radius:16px;box-shadow:0 10px 30px rgba(42,36,16,.12)}
+.cabin__media figcaption{position:absolute;left:0;right:0;bottom:0;padding:28px 14px 14px;font-size:13px;letter-spacing:.06em;color:var(--creme);
+  background:linear-gradient(to top,rgba(20,22,14,.75),transparent);opacity:0;transform:translateY(6px);transition:opacity .3s var(--ease),transform .3s var(--ease)}
+.cabin:hover .cabin__media img{transform:scale(1.04)}
+.cabin:hover figcaption,.cabin:focus-within figcaption{opacity:1;transform:none}
+
+/* ───────── 5. SPLIT ───────── */
+.split{display:grid;grid-template-columns:60% 40%;min-height:620px}
+.split__text{background:var(--marrom-split);display:flex;align-items:center;justify-content:center;padding:88px 72px}
+.split__inner{max-width:470px}
+.split__title{font-size:clamp(24px,2.5vw,31px);color:#EEE6CC;letter-spacing:.1em;line-height:1.45;margin-bottom:28px}
+.split__text p{color:var(--texto-creme);text-align:justify;hyphens:auto;font-size:15.5px;line-height:1.65;margin-bottom:14px;font-weight:300}
+.split__text .btn{margin-top:24px}
+.split__media{min-height:100%}
+.split__media img{position:absolute;inset:0}
+
+/* ───────── 6. NOSSA HISTÓRIA ───────── */
+.story{background:var(--pattern) repeat 0 0 / 256px 64px,var(--marrom-oliva);padding:0 16px 96px}
+.story__card{max-width:700px;margin:0 auto;background:var(--caqui-card);border-radius:0 0 28px 28px;padding:64px 68px 60px;text-align:center;color:var(--historia);
+  box-shadow:0 18px 40px rgba(30,24,8,.25)}
+.story__card .section-title{color:var(--historia);margin-bottom:24px;font-size:clamp(26px,3vw,33px)}
+.story__card p{font-size:15.5px;line-height:1.65;margin:0 auto 14px;max-width:540px}
+.story__card .btn{margin-top:20px}
+
+/* ───────── 7. EXPERIÊNCIAS ───────── */
+.experiences{background:var(--creme-2);padding:100px 0;text-align:center}
+.experiences__lead{max-width:560px;margin:-28px auto 56px;color:var(--texto-2);font-size:15.5px}
+.exp-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:40px}
+.exp__icon{width:64px;height:64px;border:1.5px solid var(--oliva-escuro);border-radius:50%;display:grid;place-items:center;margin:0 auto 22px;color:var(--oliva-escuro);transition:background-color .25s var(--ease),color .25s var(--ease)}
+.exp__icon .icon{width:26px;height:26px}
+.exp:hover .exp__icon{background:var(--oliva-escuro);color:var(--creme)}
+.exp h3{font-size:13.5px;font-weight:500;letter-spacing:.15em;text-transform:uppercase;color:var(--texto);margin-bottom:10px}
+.exp p{font-size:14.5px;color:var(--texto-2);line-height:1.6;max-width:240px;margin:0 auto}
+
+/* ───────── 8. GALERIA ───────── */
+.gallery{background:var(--floresta);padding:100px 0 110px;text-align:center}
+.gallery .section-title{color:var(--caqui)}
+.gallery__lead{color:var(--texto-creme-2);max-width:520px;margin:-28px auto 52px;font-size:15.5px}
+.gallery__grid{display:grid;grid-template-columns:1.25fr 1fr 1fr;grid-template-rows:260px 260px;gap:12px}
+.g-item{border-radius:15px}
+.g-item:hover img{transform:scale(1.04)}
+.g-item--tall{grid-row:span 2}
+.g-item--wide{grid-column:span 2}
+.g-item figcaption{position:absolute;left:14px;bottom:12px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--creme);text-shadow:0 1px 8px rgba(0,0,0,.5)}
+
+/* ───────── 9. CTA RESERVA ───────── */
+.booking{position:relative;padding:130px 0 140px;text-align:center;overflow:hidden}
+.booking__bg{position:absolute;inset:0}
+.booking::before{content:"";position:absolute;inset:0;z-index:1;background:rgba(20,22,14,.58)}
+.booking .container{position:relative;z-index:2}
+.booking__title{font-size:clamp(32px,5vw,58px);color:var(--palha);letter-spacing:.14em;margin-bottom:14px}
+.booking__sub{color:var(--texto-creme);font-size:16px;font-weight:300;max-width:520px;margin:0 auto 44px}
+.booking-form{display:flex;align-items:stretch;background:var(--creme);border-radius:999px;padding:8px;max-width:1080px;margin:0 auto;text-align:left;box-shadow:0 20px 50px rgba(10,10,5,.35)}
+.field{position:relative;flex:1;display:flex;align-items:center;gap:10px;padding:10px 16px;border-radius:999px;cursor:pointer;transition:background-color .2s var(--ease);min-width:0}
+.field + .field::before{content:"";position:absolute;left:0;top:22%;bottom:22%;width:1px;background:rgba(66,52,15,.18)}
+.field:hover{background:rgba(195,180,123,.22)}
+.field > .icon{color:var(--oliva-escuro)}
+.field__body{display:flex;flex-direction:column;min-width:0;flex:1}
+.field__label{font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--texto-2);font-weight:500}
+.field__value{font-size:14.5px;color:var(--texto);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.field__value.placeholder{color:#8a8169;font-weight:400}
+.field .chev{width:16px;height:16px;color:var(--texto-2);transition:transform .2s var(--ease)}
+.field.open .chev{transform:rotate(180deg)}
+.field input[type=date]{position:absolute;inset:0;opacity:0;width:100%;height:100%;cursor:pointer;border:0}
+.dropdown{position:absolute;top:calc(100% + 12px);left:0;min-width:220px;background:var(--creme);border-radius:16px;padding:8px;box-shadow:0 18px 40px rgba(20,18,8,.25);
+  opacity:0;visibility:hidden;transform:translateY(-6px);transition:opacity .2s var(--ease),transform .2s var(--ease),visibility .2s;z-index:5;list-style:none}
+.field.open .dropdown{opacity:1;visibility:visible;transform:none}
+.dropdown li{padding:10px 14px;border-radius:10px;font-size:14.5px;cursor:pointer;transition:background-color .15s}
+.dropdown li:hover,.dropdown li[aria-selected=true]{background:rgba(195,180,123,.35)}
+.booking-form .btn{padding:0 30px;white-space:nowrap;flex:none}
+.booking__msg{margin-top:22px;color:var(--caqui-claro);font-size:14px;min-height:22px;letter-spacing:.04em}
+
+/* ───────── 10. FOOTER ───────── */
+.footer{background:var(--floresta-2);color:var(--texto-creme)}
+.footer__grid{display:grid;grid-template-columns:1.3fr .8fr 1.1fr 1.3fr;gap:48px;padding:80px 40px 60px}
+.footer__brand{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+.footer__brand .logo{color:var(--caqui);width:42px;height:42px}
+.footer__brand span{font-family:var(--f-display);font-size:30px;letter-spacing:.2em;color:var(--palha)}
+.footer p,.footer li{font-size:14.5px;color:var(--texto-creme-2)}
+.footer h4{font-family:var(--f-texto);font-size:12px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:var(--texto-creme);margin-bottom:20px}
+.footer ul{list-style:none;display:grid;gap:10px}
+.footer a{transition:color .2s}
+.footer a:hover{color:var(--caqui)}
+.contact li{display:flex;gap:10px;align-items:flex-start}
+.contact .icon{width:18px;height:18px;color:var(--caqui);margin-top:3px}
+.social{display:inline-flex;align-items:center;gap:10px;margin-bottom:20px;color:var(--texto-creme)}
+.social .icon{color:var(--caqui)}
+.newsletter{display:flex;gap:8px;margin-top:12px}
+.newsletter input{flex:1;min-width:0;background:var(--creme);border:0;border-radius:999px;padding:12px 18px;font-size:14px;color:var(--texto)}
+.newsletter input::placeholder{color:#8a8169}
+.newsletter input:focus{outline:2px solid var(--caqui);outline-offset:2px}
+.newsletter .btn{padding:0 20px}
+.footer__bottom{border-top:1px solid rgba(232,223,194,.12);padding:22px 40px;display:flex;justify-content:space-between;gap:16px;font-size:13px;color:var(--texto-creme-2);flex-wrap:wrap}
+
+/* ───────── RESPONSIVO ───────── */
+@media (max-width:1100px){
+  .nav{gap:28px;font-size:14px}
+  .nav--left{padding-right:36px}.nav--right{padding-left:36px}
+  .exp-grid{grid-template-columns:repeat(2,1fr);gap:48px 32px}
+  .footer__grid{grid-template-columns:1fr 1fr}
+}
+@media (max-width:900px){
+  .header__inner{height:72px;padding:0 20px}
+  .nav{display:none}
+  .menu-toggle{display:block;grid-column:3}
+  .header__inner .logo{grid-column:2}
+  .split{grid-template-columns:1fr}
+  .split__text{padding:72px 32px}
+  .split__media{min-height:460px}
+  .booking-form{flex-direction:column;border-radius:20px;padding:10px}
+  .field{border-radius:12px;padding:14px 16px}
+  .field + .field::before{left:16px;right:16px;top:0;bottom:auto;width:auto;height:1px}
+  .booking-form .btn{padding:16px;margin-top:6px}
+  .dropdown{left:0;right:0;min-width:0}
+}
+@media (max-width:720px){
+  .container{padding:0 16px}
+  .hero{height:82vh;min-height:540px}
+  .hero__title{font-size:clamp(64px,22vw,96px)}
+  .hero__kicker{font-size:13px}
+  .hero__sub{font-size:11px;letter-spacing:.24em}
+  .pattern-band{height:52px;background-size:208px 52px}
+  .cabins,.experiences,.gallery{padding:72px 0}
+  .cabins__grid{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:82%;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;padding:0 16px 12px;margin:0 -16px 40px;scrollbar-width:none}
+  .cabins__grid::-webkit-scrollbar{display:none}
+  .cabin{scroll-snap-align:center}
+  .cabin figcaption{opacity:1;transform:none}
+  .story{padding:0 16px 72px}
+  .story__card{padding:48px 24px}
+  .exp-grid{grid-template-columns:1fr}
+  .gallery__grid{grid-template-columns:1fr;grid-template-rows:none;grid-auto-rows:240px}
+  .g-item--tall{grid-row:span 1}.g-item--wide{grid-column:span 1}
+  .g-item--tall{grid-row:auto;height:340px}
+  .booking{padding:90px 0}
+  .footer__grid{grid-template-columns:1fr;padding:60px 16px 40px;gap:36px}
+  .footer__bottom{padding:20px 16px}
+}
+</style>
+</head>
+<body>
+
+<!-- Ícones (Lucide, desenhados inline) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-menu" viewBox="0 0 24 24"><line x1="4" x2="20" y1="7" y2="7"/><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="17" y2="17"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></symbol>
+    <symbol id="i-calendar" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></symbol>
+    <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+    <symbol id="i-bath" viewBox="0 0 24 24"><path d="M9 6 6.5 3.5a1.5 1.5 0 0 0-1-.5C4.68 3 4 3.68 4 4.5V17a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5"/><line x1="10" x2="8" y1="5" y2="7"/><line x1="2" x2="22" y1="12" y2="12"/><line x1="7" x2="7" y1="19" y2="21"/><line x1="17" x2="17" y1="19" y2="21"/></symbol>
+    <symbol id="i-coffee" viewBox="0 0 24 24"><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/><line x1="6" x2="6" y1="2" y2="4"/><line x1="10" x2="10" y1="2" y2="4"/><line x1="14" x2="14" y1="2" y2="4"/></symbol>
+    <symbol id="i-trees" viewBox="0 0 24 24"><path d="M10 10v.2A3 3 0 0 1 8.9 16H5a3 3 0 0 1-1-5.8V10a3 3 0 0 1 6 0Z"/><path d="M7 16v6"/><path d="M13 19v3"/><path d="M12 19h8.3a1 1 0 0 0 .7-1.7L18 14h.3a1 1 0 0 0 .7-1.7L16 9h.2a1 1 0 0 0 .8-1.7L13 3l-1.4 1.5"/></symbol>
+    <symbol id="i-flame" viewBox="0 0 24 24"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></symbol>
+    <symbol id="i-instagram" viewBox="0 0 24 24"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></symbol>
+    <symbol id="i-mail" viewBox="0 0 24 24"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></symbol>
+    <symbol id="i-phone" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></symbol>
+    <!-- Logo BOAM: quadrado com 3 arcos concêntricos -->
+    <symbol id="logo-boam" viewBox="0 0 44 44">
+      <rect x="1.5" y="1.5" width="41" height="41" rx="6" fill="none" stroke="currentColor" stroke-width="2.2"/>
+      <g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="butt">
+        <path d="M8 38V18a14 14 0 0 1 28 0v20"/>
+        <path d="M14 38V19a8 8 0 0 1 16 0v19"/>
+        <path d="M20 38V20a2 2 0 0 1 4 0v18"/>
+      </g>
+    </symbol>
+  </defs>
+</svg>
+
+<!-- 1. HEADER -->
+<header class="header" id="topo">
+  <div class="header__inner">
+    <nav class="nav nav--left" aria-label="Navegação principal">
+      <a href="#topo" class="active">Início</a>
+      <a href="#reserva">Reserve sua estadia</a>
+      <a href="#sobre">Sobre</a>
+    </nav>
+    <a href="#topo" class="logo" aria-label="BOAM — página inicial"><svg><use href="#logo-boam"/></svg></a>
+    <nav class="nav nav--right" aria-label="Navegação secundária">
+      <a href="#historia">Nossa história</a>
+      <a href="#galeria">Blog</a>
+      <a href="#contato">Contato</a>
+    </nav>
+    <button class="menu-toggle" aria-label="Abrir menu" aria-expanded="false" aria-controls="menu-mobile"><svg class="icon"><use href="#i-menu"/></svg></button>
+  </div>
+</header>
+
+<div class="mobile-menu" id="menu-mobile" aria-hidden="true">
+  <button class="mobile-menu__close" aria-label="Fechar menu"><svg class="icon"><use href="#i-x"/></svg></button>
+  <span class="logo"><svg><use href="#logo-boam"/></svg></span>
+  <a href="#topo">Início</a>
+  <a href="#reserva">Reserve sua estadia</a>
+  <a href="#sobre">Sobre</a>
+  <a href="#historia">Nossa história</a>
+  <a href="#galeria">Blog</a>
+  <a href="#contato">Contato</a>
+</div>
+
+<main>
+  <!-- 2. HERO -->
+  <section class="hero" aria-label="Boas-vindas">
+    <div class="hero__bg photo">
+      <img src="https://images.unsplash.com/photo-1762067412033-83b4420574a3?auto=format&fit=crop&w=2000&q=80" alt="Cabana elevada com varanda no meio da copa das árvores, sobre a encosta da mata" fetchpriority="high" onerror="this.remove()">
+    </div>
+    <div class="hero__content">
+      <p class="hero__kicker">Bem-vindo ao</p>
+      <h1 class="hero__title">BOAM</h1>
+      <p class="hero__sub">Seu lugar para desacelerar</p>
+      <a href="#reserva" class="btn btn--caqui">Reserve sua estadia</a>
+    </div>
+  </section>
+
+  <!-- 3. FAIXA -->
+  <div class="pattern-band" role="presentation"></div>
+
+  <!-- 4. CABANAS -->
+  <section class="cabins" id="cabanas">
+    <div class="container">
+      <h2 class="display section-title reveal">Nossas cabanas</h2>
+      <div class="cabins__grid reveal">
+        <article class="cabin">
+          <h3 class="cabin__name">Ninho da Águia</h3>
+          <figure class="cabin__media photo">
+            <img src="https://images.unsplash.com/photo-1768700532319-b590898ae9c0?auto=format&fit=crop&w=800&q=80" alt="Cabana de madeira sobre palafitas cercada por mata tropical" loading="lazy" onerror="this.remove()">
+            <figcaption>2 hóspedes · Banheira externa</figcaption>
+          </figure>
+        </article>
+        <article class="cabin">
+          <h3 class="cabin__name">Pico do Pinho</h3>
+          <figure class="cabin__media photo">
+            <img src="https://images.unsplash.com/photo-1767334573989-ffa2720523b2?auto=format&fit=crop&w=800&q=80" alt="Chalé de madeira com varanda e plantas tropicais" loading="lazy" onerror="this.remove()">
+            <figcaption>4 hóspedes · Lareira e deck</figcaption>
+          </figure>
+        </article>
+        <article class="cabin">
+          <h3 class="cabin__name">Céu da Serra</h3>
+          <figure class="cabin__media photo">
+            <img src="https://images.unsplash.com/photo-1672573648466-77272b1f9a86?auto=format&fit=crop&w=800&q=80" alt="Cabana alta de madeira com janelões para a mata" loading="lazy" onerror="this.remove()">
+            <figcaption>2 hóspedes · Janelões para a mata</figcaption>
+          </figure>
+        </article>
+      </div>
+      <a href="#reserva" class="btn btn--oliva reveal">Escolha seu refúgio</a>
+    </div>
+  </section>
+
+  <!-- 5. SPLIT -->
+  <section class="split" id="sobre">
+    <div class="split__text">
+      <div class="split__inner reveal">
+        <h2 class="display split__title">Este é o seu lugar para<br>desacelerar e descansar</h2>
+        <p>Aqui o relógio perde a pressa. Você acorda com o canto dos pássaros, prepara o café sem hora marcada e deixa a xícara esfriar na varanda enquanto a névoa se desfaz entre as árvores.</p>
+        <p>À tarde, o banho é ao ar livre, cercado de bambus e folhagens. À noite, o único som é o da mata respirando. Sem pressa, sem barulho, sem notificações — só o tempo devolvido a você.</p>
+        <a href="#historia" class="btn btn--creme">Saiba mais</a>
+      </div>
+    </div>
+    <figure class="split__media photo">
+      <img src="https://images.unsplash.com/photo-1643081265466-129261b30eec?auto=format&fit=crop&w=1200&q=80" alt="Água do chuveiro ao ar livre caindo sob luz quente, na mata escura" loading="lazy" onerror="this.remove()">
+    </figure>
+  </section>
+
+  <!-- 6. NOSSA HISTÓRIA -->
+  <section class="story" id="historia">
+    <div class="story__card reveal">
+      <h2 class="display section-title">Nossa história</h2>
+      <p>O BOAM nasceu de um sonho de família: viver mais perto da floresta. Cada cabana foi erguida à mão, tábua por tábua, com madeira de reflorestamento e o cuidado de não derrubar uma única árvore pelo caminho.</p>
+      <p>Escolhemos ter poucas casas — e manter assim. Porque o silêncio, a privacidade e a mata intocada são o que temos de mais precioso para oferecer.</p>
+      <a href="#historia" class="btn btn--oliva">Conheça nossa história</a>
+    </div>
+  </section>
+
+  <!-- 7. EXPERIÊNCIAS -->
+  <section class="experiences" id="experiencias">
+    <div class="container">
+      <h2 class="display section-title reveal">Viva a floresta</h2>
+      <p class="experiences__lead reveal">Pequenos rituais que transformam uma estadia em memória.</p>
+      <div class="exp-grid">
+        <div class="exp reveal">
+          <div class="exp__icon"><svg class="icon"><use href="#i-bath"/></svg></div>
+          <h3>Banheira ao ar livre</h3>
+          <p>Água quente sob a copa das árvores, com a mata como única testemunha.</p>
+        </div>
+        <div class="exp reveal">
+          <div class="exp__icon"><svg class="icon"><use href="#i-coffee"/></svg></div>
+          <h3>Café da manhã na cabana</h3>
+          <p>Cesta com pão de fermentação natural, frutas da estação e café coado da região.</p>
+        </div>
+        <div class="exp reveal">
+          <div class="exp__icon"><svg class="icon"><use href="#i-trees"/></svg></div>
+          <h3>Trilhas e cachoeiras</h3>
+          <p>Caminhos sinalizados que levam a poços de água fria e mirantes escondidos.</p>
+        </div>
+        <div class="exp reveal">
+          <div class="exp__icon"><svg class="icon"><use href="#i-flame"/></svg></div>
+          <h3>Lareira e noites estreladas</h3>
+          <p>Lenha separada, mantas macias e um céu sem luz da cidade para atrapalhar.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="pattern-band" role="presentation"></div>
+
+  <!-- 8. GALERIA -->
+  <section class="gallery" id="galeria">
+    <div class="container">
+      <h2 class="display section-title reveal">Momentos na mata</h2>
+      <p class="gallery__lead reveal">Instantes que nossos hóspedes levam para casa.</p>
+      <div class="gallery__grid reveal">
+        <figure class="g-item g-item--tall photo">
+          <img src="https://images.unsplash.com/photo-1556648011-e01aca870a81?auto=format&fit=crop&w=900&q=80" alt="Névoa sobre a mata na serra" loading="lazy" onerror="this.remove()">
+          <figcaption>Névoa da manhã</figcaption>
+        </figure>
+        <figure class="g-item photo">
+          <img src="https://images.unsplash.com/photo-1777168925132-ada59d1cc0d0?auto=format&fit=crop&w=700&q=80" alt="Rede colorida pendurada na varanda" loading="lazy" onerror="this.remove()">
+          <figcaption>Rede na varanda</figcaption>
+        </figure>
+        <figure class="g-item photo">
+          <img src="https://images.unsplash.com/photo-1631630259742-c0f0b17c6c10?auto=format&fit=crop&w=700&q=80" alt="Interior de madeira com lareira e luz quente" loading="lazy" onerror="this.remove()">
+          <figcaption>Lareira acesa</figcaption>
+        </figure>
+        <figure class="g-item g-item--wide photo">
+          <img src="https://images.unsplash.com/photo-1777913319909-1d27d36db93e?auto=format&fit=crop&w=1200&q=80" alt="Varanda de bambu com vista para as montanhas verdes" loading="lazy" onerror="this.remove()">
+          <figcaption>Vista para a serra</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9. CTA RESERVA -->
+  <section class="booking" id="reserva">
+    <div class="booking__bg photo">
+      <img src="https://images.unsplash.com/photo-1788543770489-065611ad4ea6?auto=format&fit=crop&w=2000&q=80" alt="" loading="lazy" onerror="this.remove()">
+    </div>
+    <div class="container">
+      <h2 class="display booking__title reveal">Sua pausa começa aqui</h2>
+      <p class="booking__sub reveal">Escolha as datas, a cabana e deixe o resto com a floresta.</p>
+
+      <form class="booking-form reveal" id="booking-form" novalidate>
+        <label class="field" data-field="checkin">
+          <svg class="icon"><use href="#i-calendar"/></svg>
+          <span class="field__body"><span class="field__label">Check-in</span><span class="field__value placeholder">Escolher data</span></span>
+          <svg class="icon chev"><use href="#i-chevron"/></svg>
+          <input type="date" name="checkin" aria-label="Data de check-in">
+        </label>
+        <label class="field" data-field="checkout">
+          <svg class="icon"><use href="#i-calendar"/></svg>
+          <span class="field__body"><span class="field__label">Check-out</span><span class="field__value placeholder">Escolher data</span></span>
+          <svg class="icon chev"><use href="#i-chevron"/></svg>
+          <input type="date" name="checkout" aria-label="Data de check-out">
+        </label>
+        <div class="field" data-dropdown="guests" tabindex="0" role="button" aria-haspopup="listbox" aria-expanded="false">
+          <svg class="icon"><use href="#i-users"/></svg>
+          <span class="field__body"><span class="field__label">Hóspedes</span><span class="field__value">2 hóspedes</span></span>
+          <svg class="icon chev"><use href="#i-chevron"/></svg>
+          <ul class="dropdown" role="listbox">
+            <li role="option">1 hóspede</li>
+            <li role="option" aria-selected="true">2 hóspedes</li>
+            <li role="option">3 hóspedes</li>
+            <li role="option">4 hóspedes</li>
+          </ul>
+        </div>
+        <div class="field" data-dropdown="cabin" tabindex="0" role="button" aria-haspopup="listbox" aria-expanded="false">
+          <svg class="icon"><use href="#i-home"/></svg>
+          <span class="field__body"><span class="field__label">Cabana</span><span class="field__value">Todas</span></span>
+          <svg class="icon chev"><use href="#i-chevron"/></svg>
+          <ul class="dropdown" role="listbox">
+            <li role="option" aria-selected="true">Todas</li>
+            <li role="option">Ninho da Águia</li>
+            <li role="option">Pico do Pinho</li>
+            <li role="option">Céu da Serra</li>
+          </ul>
+        </div>
+        <button type="submit" class="btn btn--oliva">Ver disponibilidade</button>
+      </form>
+      <p class="booking__msg" id="booking-msg" aria-live="polite"></p>
+    </div>
+  </section>
+</main>
+
+<!-- 10. FOOTER -->
+<footer class="footer" id="contato">
+  <div class="pattern-band" role="presentation"></div>
+  <div class="footer__grid" style="max-width:1240px;margin:0 auto">
+    <div>
+      <div class="footer__brand"><span class="logo"><svg><use href="#logo-boam"/></svg></span><span>BOAM</span></div>
+      <p>Cabanas de madeira escondidas na mata, feitas para quem precisa lembrar como é descansar de verdade.</p>
+    </div>
+    <div>
+      <h4>Navegação</h4>
+      <ul>
+        <li><a href="#topo">Início</a></li>
+        <li><a href="#cabanas">Nossas cabanas</a></li>
+        <li><a href="#sobre">Sobre</a></li>
+        <li><a href="#historia">Nossa história</a></li>
+        <li><a href="#reserva">Reservar</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Contato</h4>
+      <ul class="contact">
+        <li><svg class="icon"><use href="#i-phone"/></svg><a href="#contato">WhatsApp (12) 99876-5432</a></li>
+        <li><svg class="icon"><use href="#i-mail"/></svg><a href="#contato">ola@boam.com.br</a></li>
+        <li><svg class="icon"><use href="#i-pin"/></svg><span>Estrada da Mata, km 12<br>Serra da Mantiqueira — SP</span></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Acompanhe</h4>
+      <a href="#contato" class="social"><svg class="icon"><use href="#i-instagram"/></svg>@boam.cabanas</a>
+      <p>Receba novidades, datas especiais e notícias da floresta.</p>
+      <form class="newsletter" id="newsletter" novalidate>
+        <input type="email" placeholder="Seu e-mail" aria-label="Seu e-mail" required>
+        <button class="btn btn--caqui" type="submit">Assinar</button>
+      </form>
+    </div>
+  </div>
+  <div class="footer__bottom" style="max-width:1240px;margin:0 auto">
+    <span>© 2026 BOAM — Todos os direitos reservados</span>
+    <a href="#contato">Política de privacidade</a>
+  </div>
+</footer>
+
+<script>
+(() => {
+  // Header com sombra ao rolar
+  const header = document.querySelector('.header');
+  const onScroll = () => header.classList.toggle('scrolled', window.scrollY > 8);
+  onScroll(); window.addEventListener('scroll', onScroll, {passive:true});
+
+  // Menu mobile
+  const menu = document.getElementById('menu-mobile');
+  const toggle = document.querySelector('.menu-toggle');
+  const setMenu = open => {
+    menu.classList.toggle('open', open);
+    menu.setAttribute('aria-hidden', !open);
+    toggle.setAttribute('aria-expanded', open);
+    document.body.style.overflow = open ? 'hidden' : '';
+  };
+  toggle.addEventListener('click', () => setMenu(true));
+  menu.querySelector('.mobile-menu__close').addEventListener('click', () => setMenu(false));
+  menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => setMenu(false)));
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') { setMenu(false); closeDropdowns(); } });
+
+  // Fade-in ao rolar
+  const io = new IntersectionObserver(entries => entries.forEach(en => {
+    if (en.isIntersecting) { en.target.classList.add('is-visible'); io.unobserve(en.target); }
+  }), {threshold:.12, rootMargin:'0px 0px -40px 0px'});
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // Campos de data
+  const fmt = v => { const [y,m,d] = v.split('-'); return `${d}/${m}/${y}`; };
+  const today = new Date().toISOString().slice(0,10);
+  const form = document.getElementById('booking-form');
+  const ci = form.checkin, co = form.checkout;
+  ci.min = today; co.min = today;
+  [ci, co].forEach(inp => {
+    inp.addEventListener('click', () => { try { inp.showPicker(); } catch(_){} });
+    inp.addEventListener('change', () => {
+      const val = inp.closest('.field').querySelector('.field__value');
+      val.textContent = inp.value ? fmt(inp.value) : 'Escolher data';
+      val.classList.toggle('placeholder', !inp.value);
+      if (inp === ci && ci.value) { co.min = ci.value; if (co.value && co.value <= ci.value) { co.value=''; co.dispatchEvent(new Event('change')); } }
+    });
+  });
+
+  // Dropdowns customizados
+  const dropdowns = document.querySelectorAll('[data-dropdown]');
+  function closeDropdowns(except){ dropdowns.forEach(d => { if (d!==except){ d.classList.remove('open'); d.setAttribute('aria-expanded','false'); } }); }
+  dropdowns.forEach(dd => {
+    const toggleDD = () => { const o = !dd.classList.contains('open'); closeDropdowns(dd); dd.classList.toggle('open', o); dd.setAttribute('aria-expanded', o); };
+    dd.addEventListener('click', e => { if (!e.target.closest('li')) toggleDD(); });
+    dd.addEventListener('keydown', e => { if (e.key==='Enter'||e.key===' ') { e.preventDefault(); toggleDD(); } });
+    dd.querySelectorAll('li').forEach(li => li.addEventListener('click', e => {
+      e.stopPropagation();
+      dd.querySelectorAll('li').forEach(x => x.removeAttribute('aria-selected'));
+      li.setAttribute('aria-selected','true');
+      dd.querySelector('.field__value').textContent = li.textContent;
+      closeDropdowns();
+    }));
+  });
+  document.addEventListener('click', e => { if (!e.target.closest('[data-dropdown]')) closeDropdowns(); });
+
+  // Envio da reserva
+  const msg = document.getElementById('booking-msg');
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    if (!ci.value || !co.value) { msg.textContent = 'Escolha as datas de check-in e check-out para ver a disponibilidade.'; return; }
+    const noites = Math.round((new Date(co.value) - new Date(ci.value)) / 864e5);
+    const cabana = form.querySelector('[data-dropdown=cabin] .field__value').textContent;
+    const hosp = form.querySelector('[data-dropdown=guests] .field__value').textContent;
+    msg.textContent = `Boa notícia: há disponibilidade para ${noites} ${noites===1?'noite':'noites'} · ${hosp} · ${cabana}. Em breve entraremos em contato.`;
+  });
+
+  // Newsletter
+  document.getElementById('newsletter').addEventListener('submit', e => {
+    e.preventDefault();
+    const input = e.target.querySelector('input');
+    if (!input.value.includes('@')) { input.focus(); input.placeholder = 'Digite um e-mail válido'; return; }
+    input.value = ''; input.placeholder = 'Obrigado! Até breve na mata.';
+  });
+})();
+</script>
+</body>
+</html>
