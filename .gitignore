@@ -1,6 +1,13 @@
+# dependências e build
 node_modules
 .next
 out
 next-env.d.ts
 *.tsbuildinfo
 .DS_Store
+.env*
+
+# material de origem (não é usado pelo site; fotos originais ~30 MB e dados brutos do anúncio)
+fotos/
+dados/
+index.html
